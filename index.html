@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Angebot Website-Überarbeitung omnitest.de</title>
+<style>
+/* Layout: Prüfbericht. Schmale Lesespalte, Befunde als Protokollzeilen mit Einstufung, ein dunkles Band für den Entwurf. */
+:root{
+  --bg:#f4f6f8; --surface:#ffffff; --ink:#13202c; --muted:#566675; --line:#d5dce3;
+  --steel:#0e2a47; --steel-2:#16395f; --orange:#f39200; --orange-ink:#8a4f00;
+  --hoch:#b3261e; --mittel:#8a5a00; --niedrig:#2f6b4a;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0c1520; --surface:#131f2c; --ink:#e8eef4; --muted:#9aabba; --line:#28384a;
+  --steel:#0a1d33; --steel-2:#123152; --orange:#f7a326; --orange-ink:#f7a326;
+  --hoch:#ff8a80; --mittel:#f2c264; --niedrig:#8fd0aa; color-scheme:dark;
+}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--sans)}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit}
+.wrap{max-width:920px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.9rem,5vw,3rem);letter-spacing:-.02em;font-weight:700}
+h2{font-size:clamp(1.35rem,3vw,1.75rem);letter-spacing:-.01em}
+h3{font-size:1.05rem}
+p{margin:0}
+.label{font:600 .72rem/1.3 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+
+.top{background:var(--steel);color:#fff;padding-block:44px 48px}
+.top .label{color:#a9bfd6}
+.top h1{margin-top:14px;max-width:18ch}
+.top .lead{margin-top:16px;max-width:60ch;color:#d3deea;font-size:1.06rem}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:#2b4a6d;margin-top:32px;border:1px solid #2b4a6d}
+.facts div{background:var(--steel);padding:14px 16px}
+.facts dt{font:600 .7rem/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#a9bfd6}
+.facts dd{margin:6px 0 0;font-size:1.25rem;font-weight:650}
+.facts dd small{display:block;font-size:.8rem;font-weight:400;color:#c4d2e0;margin-top:2px}
+dl{margin:0}
+
+section{padding-block:48px}
+section + section{border-top:1px solid var(--line)}
+.sec-head{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.sec-head p{color:var(--muted);max-width:65ch}
+
+.group{margin-top:28px}
+.group h3{padding-bottom:10px;border-bottom:2px solid var(--ink)}
+.find{display:grid;grid-template-columns:92px minmax(0,1fr);gap:6px 18px;padding:16px 0;border-bottom:1px solid var(--line)}
+.find .sev{font:700 .72rem/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding-top:3px}
+.sev.hoch{color:var(--hoch)} .sev.mittel{color:var(--mittel)} .sev.niedrig{color:var(--niedrig)}
+.find strong{display:block}
+.find p{color:var(--muted);margin-top:4px;max-width:68ch}
+.find code{font:.86em var(--mono);background:var(--surface);border:1px solid var(--line);padding:1px 5px;border-radius:3px;overflow-wrap:anywhere}
+.find .fix{color:var(--ink);margin-top:6px}
+.find .fix::before{content:"Lösung: ";font-weight:650}
+@media (max-width:560px){.find{grid-template-columns:1fr}}
+
+.good{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 28px;padding:0;margin:0;list-style:none}
+.good li{padding-left:18px;position:relative;color:var(--muted)}
+.good li::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:8px;background:var(--niedrig)}
+.good b{color:var(--ink);font-weight:650}
+
+.shots{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:640px){.shots{grid-template-columns:1fr}}
+figure{margin:0}
+figure img{border:1px solid var(--line);width:100%}
+figcaption{font-size:.86rem;color:var(--muted);margin-top:8px}
+
+/* Entwurf */
+.band{background:var(--steel);color:#fff;padding-block:48px;border:0}
+.band .label{color:#a9bfd6}
+.band .sec-head p{color:#c9d6e3}
+.mock{background:#fff;color:#13202c;border-radius:6px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.m-nav{display:flex;align-items:center;gap:20px;padding:14px 22px;border-bottom:1px solid #e3e8ee;flex-wrap:wrap}
+.m-logo{font-weight:800;letter-spacing:.04em;color:#d97f00;line-height:1}
+.m-logo small{display:block;color:#13202c;font-size:.62rem;letter-spacing:.14em;font-weight:600;margin-top:3px}
+.m-links{display:flex;gap:20px;margin-left:auto;font-size:.9rem;color:#3d4d5c;flex-wrap:wrap}
+.m-btn{display:inline-block;background:#f39200;color:#13202c;font-weight:700;padding:10px 16px;border-radius:3px;font-size:.9rem;text-decoration:none}
+.m-btn.ghost{background:transparent;color:#fff;box-shadow:inset 0 0 0 1.5px #7f9bb8}
+.m-hero{background:linear-gradient(160deg,#0e2a47 0%,#16395f 100%);color:#fff;padding:44px 28px 0;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:28px;align-items:end}
+.m-hero h4{margin:10px 0 0;font-size:clamp(1.5rem,3.6vw,2.3rem);line-height:1.12;letter-spacing:-.02em;text-wrap:balance}
+.m-hero h4 em{font-style:normal;color:#f7a326}
+.m-hero .m-sub{margin-top:14px;color:#d3deea;max-width:46ch}
+.m-cta{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 30px}
+.m-eyebrow{font:600 .7rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#f7a326}
+.scan{align-self:stretch;display:flex;flex-direction:column;justify-content:flex-end;min-width:0}
+.scan svg{width:100%;height:auto;display:block}
+.scan span{font:600 .66rem var(--mono);letter-spacing:.08em;color:#8fa9c4;text-transform:uppercase;padding:0 0 8px}
+.m-proof{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:#e3e8ee}
+.m-proof div{background:#fff;padding:14px 22px;font-size:.86rem;color:#566675}
+.m-proof b{display:block;color:#13202c;font-size:1rem}
+@media (max-width:640px){.m-hero{grid-template-columns:1fr;padding:32px 18px 0}.m-links{display:none}.m-nav{padding:12px 18px}.m-nav .m-btn{margin-left:auto}.m-proof{grid-template-columns:1fr}}
+.band .note{margin-top:16px;font-size:.88rem;color:#b9c9da;max-width:70ch}
+
+.scope{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px 32px}
+.scope h3{margin-bottom:8px}
+.scope ul{margin:0;padding-left:18px;color:var(--muted)}
+.scope li{margin-top:4px}
+.price{margin-top:32px;background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--orange);padding:24px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px 32px;align-items:center}
+.price .sum{font-size:clamp(2rem,6vw,2.8rem);font-weight:750;letter-spacing:-.02em;line-height:1}
+.price .sum small{display:block;font-size:.85rem;font-weight:400;color:var(--muted);letter-spacing:0;margin-top:8px}
+.price p{color:var(--muted);max-width:52ch}
+@media (max-width:600px){.price{grid-template-columns:1fr}}
+
+.steps{list-style:none;margin:0;padding:0;counter-reset:s;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:20px 28px}
+.steps li{counter-increment:s;border-top:2px solid var(--ink);padding-top:12px;color:var(--muted)}
+.steps li::before{content:counter(s,decimal-leading-zero);font:700 .8rem var(--mono);color:var(--orange-ink);display:block;margin-bottom:6px}
+.steps b{color:var(--ink);display:block}
+
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:520px}
+th,td{text-align:left;padding:10px 14px 10px 0;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+td{color:var(--muted)} td:first-child{color:var(--ink);font-weight:600}
+
+footer{padding-block:32px 56px;color:var(--muted);font-size:.86rem;border-top:1px solid var(--line)}
+footer p + p{margin-top:8px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <p class="label">Angebot · Y Ventures · 19.11.2026</p>
+    <h1>Überarbeitung der Website omnitest.de</h1>
+    <p class="lead">Wir haben alle 27 Seiten von omnitest.de geprüft: Auffindbarkeit bei Google, Inhalte, Bedienung am Handy und die rechtlichen Pflichtseiten. Hier stehen die Befunde, ein erster Entwurf und das Angebot.</p>
+    <dl class="facts">
+      <div><dt>Geprüft</dt><dd class="num">27 Seiten<small>Deutsch und Englisch</small></dd></div>
+      <div><dt>Befunde</dt><dd class="num">16<small>davon 6 mit hoher Priorität</small></dd></div>
+      <div><dt>Festpreis</dt><dd class="num">1.700 €<small>netto, einmalig</small></dd></div>
+    </dl>
+  </div>
+</header>
+
+<main>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">Kurzfassung</p>
+      <h2>Die Technik trägt, die Inhalte sind seit 2022 stehen geblieben</h2>
+      <p>Die Seite lädt schnell und läuft sauber über HTTPS. Das Problem liegt eine Ebene darüber: Google kann die Seiten nicht unterscheiden, auf der englischen Startseite steht noch ein geschlossenes Corona-Testzentrum, und Datenschutzerklärung und Cookie-Hinweis stammen erkennbar aus der Zeit vor der DSGVO. Alles davon lässt sich im bestehenden System beheben, ohne die Seite neu zu bauen.</p>
+    </div>
+    <ul class="good">
+      <li><b>Schnell.</b> Die Startseite war im Test in unter einer Sekunde geladen.</li>
+      <li><b>Sicher ausgeliefert.</b> HTTPS mit HSTS, Lighthouse „Best Practices“ 100 von 100.</li>
+      <li><b>Zweisprachig angelegt.</b> Deutsch und Englisch sind technisch korrekt verknüpft.</li>
+      <li><b>Substanz ist da.</b> Prüfverfahren, Märkte und Standorte sind ausführlich beschrieben.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">Ist-Zustand</p>
+      <h2>So sieht ein Besucher die Seite heute</h2>
+    </div>
+    <div class="shots">
+      <figure>
+        <img src="img/ist-desktop.jpg" alt="Startseite omnitest.de am Desktop: zweizeiliges Menü, Text ist Teil des Titelbilds und unten abgeschnitten, Cookie-Leiste ohne Ablehnen-Knopf" width="1400" height="875">
+        <figcaption>Desktop: Das Menü bricht in zwei Zeilen um. Die Überschrift ist Teil des Bildes, wird abgeschnitten und ist für Google nicht lesbar. Der Kontakt-Knopf ist kaum zu erkennen.</figcaption>
+      </figure>
+      <figure>
+        <img src="img/ist-mobil.jpg" alt="Startseite omnitest.de am Handy: der Kontakt-Knopf liegt über dem Knopf Beratung" width="780" height="1688">
+        <figcaption>Handy: Der schwebende Kontakt-Knopf überdeckt den Knopf „Beratung“.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">Prüfprotokoll</p>
+      <h2>16 Befunde, nach Bereich und Priorität</h2>
+      <p>Jeder Befund ist auf der Live-Seite nachvollziehbar. Stand der Prüfung: 19.11.2026.</p>
+    </div>
+
+    <div class="group">
+      <h3>Auffindbarkeit bei Google</h3>
+      <div class="find"><span class="sev hoch">Hoch</span><div>
+        <strong>Alle Seiten haben denselben Titel und dieselbe Beschreibung</strong>
+        <p>Jede der 25 Inhaltsseiten heißt im Browser-Tab und in den Suchergebnissen „Omnitest Quality Alliance“, die Beschreibung ist überall identisch. Google kann „Zerstörungsfreie Werkstoffprüfung“ nicht von „Personaldienstleistungen“ unterscheiden.</p>
+        <p class="fix">Eigener Titel und eigene Beschreibung je Seite, mit Leistung und Region.</p></div></div>
+      <div class="find"><span class="sev hoch">Hoch</span><div>
+        <strong>Beispiel-Blogartikel des Baukastens sind öffentlich</strong>
+        <p>In der Sitemap stehen <code>/my-first-blog-post…</code> und <code>/10-reasons-you-should-love-blogging…</code>. Das sind englische Mustertexte des Website-Baukastens, die Google unter dem Namen Omnitest indexieren kann.</p>
+        <p class="fix">Beide Seiten löschen und aus der Sitemap nehmen.</p></div></div>
+      <div class="find"><span class="sev mittel">Mittel</span><div>
+        <strong>Überschriften-Struktur fehlt</strong>
+        <p>Die Startseite hat drei Hauptüberschriften, keine davon nennt das Kernthema. Alle Unterseiten haben gar keine. Mehrere Zwischenüberschriften sind leer.</p>
+        <p class="fix">Eine klare Hauptüberschrift je Seite, saubere Gliederung darunter.</p></div></div>
+      <div class="find"><span class="sev mittel">Mittel</span><div>
+        <strong>Leistungsseiten sind sehr dünn</strong>
+        <p>Die Unterseiten haben einschließlich Menü und Fußzeile nur rund 100 bis 170 Wörter. Die ausführlichen Verfahrenslisten stehen nur auf der Startseite.</p>
+        <p class="fix">Verfahren, Normen und Einsatzbereiche auf die jeweilige Leistungsseite ziehen und ergänzen.</p></div></div>
+      <div class="find"><span class="sev mittel">Mittel</span><div>
+        <strong>Bilder ohne Beschreibung, keine strukturierten Daten</strong>
+        <p>20 von 22 Bildern der Startseite haben keinen Alternativtext. Angaben zu Unternehmen und Standorten sind nicht maschinenlesbar hinterlegt.</p>
+        <p class="fix">Alternativtexte setzen, Unternehmens- und Standortdaten als strukturierte Daten ergänzen.</p></div></div>
+      <div class="find"><span class="sev niedrig">Niedrig</span><div>
+        <strong>Unsaubere Adressen</strong>
+        <p>Das Impressum liegt unter <code>/impressum4b140b0f</code>. Die englischen Seiten tragen deutsche Adressen, etwa <code>/en-gb/zerstörungsfreie-werkstoffprüfung</code>.</p>
+        <p class="fix">Adressen bereinigen und alte Adressen weiterleiten.</p></div></div>
+    </div>
+
+    <div class="group">
+      <h3>Inhalte und Aktualität</h3>
+      <div class="find"><span class="sev hoch">Hoch</span><div>
+        <strong>Englische Startseite zeigt ein geschlossenes Corona-Testzentrum</strong>
+        <p>Die Hauptüberschrift der englischen Startseite lautet „Corona Test Center Moers“, darunter Fragen und Antworten zur Testverordnung von 2022 und der Hinweis, dass das Zentrum seit Dezember 2022 dauerhaft geschlossen ist. Das ist der erste Eindruck für internationale Kunden.</p>
+        <p class="fix">Abschnitt entfernen, englische Startseite an die deutsche angleichen.</p></div></div>
+      <div class="find"><span class="sev mittel">Mittel</span><div>
+        <strong>Standortangaben widersprechen sich</strong>
+        <p>Die Startseite nennt für PELZ unter anderem Köln-Godorf und Köln-Berzdorf, die Unterseiten stattdessen „Köln-Wesseling 2 x“. Siegen wird genannt, hat aber keinen Eintrag mit Adresse.</p>
+        <p class="fix">Eine abgestimmte Standortliste, die überall gleich erscheint.</p></div></div>
+      <div class="find"><span class="sev niedrig">Niedrig</span><div>
+        <strong>Fußzeile und Social-Links veraltet</strong>
+        <p>In der Fußzeile steht „© Omnitest 2022“. Die Symbole für Facebook und Instagram führen auf die Startseiten der Netzwerke, nicht auf ein Profil. Links zu den Mitgliedsfirmen laufen noch über <code>http://</code>.</p>
+        <p class="fix">Jahr automatisch setzen, Links korrigieren oder Symbole entfernen.</p></div></div>
+    </div>
+
+    <div class="group">
+      <h3>Gestaltung und Bedienung</h3>
+      <div class="find"><span class="sev hoch">Hoch</span><div>
+        <strong>Der erste Bildschirm sagt nicht, was Omnitest tut</strong>
+        <p>Die einzige Aussage oben ist englischer Text im Titelbild, der am Desktop abgeschnitten wird. Es gibt keine lesbare Überschrift und keinen klaren nächsten Schritt.</p>
+        <p class="fix">Neuer Seitenkopf mit echter Überschrift, Kurzbeschreibung und Anfrage-Knopf. Entwurf weiter unten.</p></div></div>
+      <div class="find"><span class="sev mittel">Mittel</span><div>
+        <strong>Weiße Schrift auf Orange ist schwer lesbar</strong>
+        <p>Der Kontrast liegt bei 2,35 zu 1, empfohlen sind mindestens 4,5 zu 1. Betroffen sind 43 Elemente, darunter alle Leistungs-Knöpfe. Lighthouse bewertet die Barrierefreiheit mit 83 von 100.</p>
+        <p class="fix">Dunkle Schrift auf Orange oder dunklerer Hintergrund, Markenfarbe bleibt.</p></div></div>
+      <div class="find"><span class="sev mittel">Mittel</span><div>
+        <strong>Kontakt-Knopf überdeckt Inhalte am Handy</strong>
+        <p>Der schwebende Knopf liegt über dem Knopf „Beratung“. Am Desktop ist er blass und kaum als Knopf erkennbar.</p>
+        <p class="fix">Fester, gut sichtbarer Anfrage-Knopf im Menü und am unteren Bildschirmrand.</p></div></div>
+      <div class="find"><span class="sev niedrig">Niedrig</span><div>
+        <strong>Menü und Links</strong>
+        <p>Das Menü bricht am Desktop in zwei Zeilen um. 13 Links haben keinen lesbaren Namen, einzelne Links sind zum Antippen zu klein.</p>
+        <p class="fix">Menü auf fünf Punkte kürzen, Links benennen.</p></div></div>
+    </div>
+
+    <div class="group">
+      <h3>Recht und Datenschutz</h3>
+      <div class="find"><span class="sev hoch">Hoch</span><div>
+        <strong>Datenschutzerklärung ohne Bezug zur DSGVO</strong>
+        <p>Der Text nennt weder die DSGVO noch einen Verantwortlichen, Rechtsgrundlagen, Betroffenenrechte oder das Kontaktformular. Dafür beschreibt er Google Analytics und Google AdSense, die im Test gar nicht geladen wurden.</p>
+        <p class="fix">Neue Datenschutzerklärung passend zu dem, was die Seite tatsächlich nutzt.</p></div></div>
+      <div class="find"><span class="sev hoch">Hoch</span><div>
+        <strong>Cookie-Hinweis ohne Wahlmöglichkeit</strong>
+        <p>Die Leiste teilt nur mit, dass die Nutzung als Einverständnis gilt. Ablehnen ist nicht möglich. Statistik-Cookies des Baukastens wurden im Test schon vor jeder Auswahl gesetzt.</p>
+        <p class="fix">Einwilligungs-Banner mit „Ablehnen“ und „Akzeptieren“, Statistik erst nach Zustimmung.</p></div></div>
+      <div class="find"><span class="sev mittel">Mittel</span><div>
+        <strong>Impressum unvollständig</strong>
+        <p>Die Zeile „USt-ID nach § 27a Umsatzsteuergesetz:“ ist leer.</p>
+        <p class="fix">Nummer eintragen oder Zeile entfernen, falls keine vorhanden ist.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">Erster Entwurf</p>
+      <h2>So kann der neue Seitenkopf aussehen</h2>
+      <p>Eine lesbare Überschrift, ein Satz zur Einordnung, ein klarer nächster Schritt. Die Zahlen und Zertifizierungen stammen von der heutigen Website.</p>
+    </div>
+    <div class="mock" aria-label="Entwurf des neuen Seitenkopfs">
+      <div class="m-nav">
+        <div class="m-logo">OMNITEST<small>QUALITY ALLIANCE</small></div>
+        <div class="m-links"><span>Leistungen</span><span>Märkte</span><span>Standorte</span><span>Akademie</span><span>Über uns</span></div>
+        <span class="m-btn">Prüfung anfragen</span>
+      </div>
+      <div class="m-hero">
+        <div>
+          <span class="m-eyebrow">Testing · Inspection · Qualification</span>
+          <h4>Werkstoffprüfung, Inspektion und Qualifizierung <em>aus einer Hand.</em></h4>
+          <p class="m-sub">Die OMNITEST Quality Alliance bündelt vier mittelständische Qualitätsdienstleister. Wir prüfen bei Ihnen vor Ort oder in unseren Prüfhallen und Laboren.</p>
+          <div class="m-cta"><span class="m-btn">Prüfung anfragen</span><span class="m-btn ghost">Leistungen ansehen</span></div>
+        </div>
+        <div class="scan">
+          <span>UT · A-Bild</span>
+          <svg viewBox="0 0 320 150" role="img" aria-label="Stilisiertes Ultraschall-A-Bild mit Sendeimpuls, Fehlerecho und Rückwandecho">
+            <g stroke="#2b4a6d" stroke-width="1" fill="none">
+              <path d="M0 30H320M0 60H320M0 90H320M0 120H320M40 0V150M80 0V150M120 0V150M160 0V150M200 0V150M240 0V150M280 0V150"/>
+            </g>
+            <polyline fill="none" stroke="#f7a326" stroke-width="2.2" stroke-linejoin="round" points="0,138 14,138 18,20 23,138 27,96 31,138 36,124 40,138 118,138 122,132 126,138 150,138 154,84 158,138 162,120 166,138 236,138 240,134 244,138 262,138 266,38 271,138 275,104 279,138 284,128 288,138 320,138"/>
+            <line x1="0" y1="138" x2="320" y2="138" stroke="#7f9bb8" stroke-width="1"/>
+          </svg>
+        </div>
+      </div>
+      <div class="m-proof">
+        <div><b>Mehr als 30 Jahre</b>Erfahrung in der Qualitätssicherung</div>
+        <div><b>10 Standorte</b>und weltweit im Einsatz</div>
+        <div><b>DIN EN ISO 9712 · ASNT</b>zertifiziertes Prüfpersonal</div>
+      </div>
+    </div>
+    <p class="note">Der Entwurf zeigt Richtung und Aufbau. Farben, Bildsprache und Texte stimmen wir vor der Umsetzung gemeinsam ab.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">Angebot</p>
+      <h2>Leistungsumfang</h2>
+      <p>Die Überarbeitung findet im bestehenden Website-System statt. Adresse, Hosting und Inhalte bleiben, es entsteht kein Umzugsrisiko.</p>
+    </div>
+    <div class="scope">
+      <div><h3>Auffindbarkeit</h3><ul>
+        <li>Titel und Beschreibung für alle Seiten, deutsch und englisch</li>
+        <li>Überschriften-Struktur auf allen Seiten</li>
+        <li>Alternativtexte für alle Bilder</li>
+        <li>Strukturierte Daten für Unternehmen und Standorte</li>
+        <li>Beispiel-Artikel entfernen, Adressen bereinigen und weiterleiten</li></ul></div>
+      <div><h3>Inhalte</h3><ul>
+        <li>Englische Startseite neu aufsetzen, Corona-Abschnitt entfernen</li>
+        <li>Leistungsseiten mit Verfahren und Normen ausbauen</li>
+        <li>Einheitliche Standortliste</li>
+        <li>Fußzeile, Social-Links und Verweise korrigieren</li></ul></div>
+      <div><h3>Gestaltung</h3><ul>
+        <li>Neuer Seitenkopf mit Überschrift und Anfrage-Knopf</li>
+        <li>Menü auf eine Zeile kürzen</li>
+        <li>Lesbare Kontraste in der Markenfarbe</li>
+        <li>Kontakt-Knopf und Abstände am Handy</li></ul></div>
+      <div><h3>Pflichtseiten</h3><ul>
+        <li>Einwilligungs-Banner mit Ablehnen-Möglichkeit einrichten</li>
+        <li>Datenschutzerklärung und Impressum technisch einpflegen</li>
+        <li>Liste der eingesetzten Dienste als Grundlage für den Rechtstext</li></ul></div>
+    </div>
+    <div class="price">
+      <div>
+        <h3>Festpreis für omnitest.de</h3>
+        <p>Alle 16 Befunde, einschließlich einer Korrekturrunde und Abschlussprüfung mit Vorher-Nachher-Bericht.</p>
+      </div>
+      <div class="sum num">1.700 €<small>netto, einmalig</small></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">Ablauf</p>
+      <h2>Vier Schritte bis zur fertigen Seite</h2>
+    </div>
+    <ol class="steps">
+      <li><b>Freigabe und Zugang</b>Sie bestätigen das Angebot und geben uns einen Zugang zum Website-Editor.</li>
+      <li><b>Abstimmung</b>Kurzes Gespräch zu Standorten, Texten und dem Entwurf für den Seitenkopf.</li>
+      <li><b>Umsetzung</b>Wir arbeiten die Befunde ab, zuerst die mit hoher Priorität.</li>
+      <li><b>Abnahme</b>Sie prüfen das Ergebnis, wir setzen Korrekturen um und liefern den Abschlussbericht.</li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label">Ausblick</p>
+      <h2>Die weiteren Websites der Gruppe</h2>
+      <p>Zur Gruppe gehören vier weitere Auftritte auf mindestens drei verschiedenen Systemen. Wir haben sie nur kurz angesehen. Eine Prüfung im selben Umfang bieten wir gern im Anschluss an.</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Website</th><th>Unternehmen</th><th>System</th><th>Erster Eindruck</th></tr></thead>
+        <tbody>
+          <tr><td>pelz.de</td><td>PELZ GmbH &amp; Co. KG</td><td>WordPress</td><td>Eigener Titel vorhanden, Detailprüfung offen</td></tr>
+          <tr><td>block-quality.com</td><td>BLOCK Materialprüfungsgesellschaft mbH</td><td>Wix</td><td>Detailprüfung offen</td></tr>
+          <tr><td>oatg.de</td><td>OMNITEST Ausbildung &amp; Training GmbH</td><td>Wix</td><td>Fußzeile mit Stand 2022, Titel „HOME“</td></tr>
+          <tr><td>anerga.de</td><td>ANERGA GmbH</td><td>nicht ermittelt</td><td>Aktuell gepflegt, Detailprüfung offen</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><strong>Y Ventures</strong> · Yves Unser · y-ventures.de</p>
+    <p>Die Hinweise zu Datenschutz, Cookies und Impressum sind technische Beobachtungen und keine Rechtsberatung. Die Rechtstexte selbst sollte eine Kanzlei oder ein Datenschutzbeauftragter prüfen. Die Ladezeit wurde an einem einzelnen Aufruf gemessen, nicht über einen längeren Zeitraum.</p>
+  </div>
+</footer>
+
+</body>
+</html>
